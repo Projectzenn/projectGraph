@@ -6,9 +6,9 @@ dataSources:
     name: ProjectRegistry
     network: mumbai
     source:
-      address: "0x618880Ee2538C904eC4d66f5d7D1163DD111E522"
+      address: "0xd2925f94bA3AB298b9AdF0110c4Ed23B466f3cBe"
       abi: ProjectRegistry
-      startBlock: 41082921
+      startBlock: 41088621
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -16,6 +16,10 @@ dataSources:
       entities:
         - OwnershipTransferred
         - ProjectCreated
+        - ProjectContract
+        - Worker
+        - Milestone
+        - Work
       abis:
         - name: ProjectRegistry
           file: ./abis/ProjectRegistry.json
@@ -25,3 +29,36 @@ dataSources:
         - event: ProjectCreated(string,string,string,address,address)
           handler: handleProjectCreated
       file: ./src/project-registry.ts
+templates:
+  - name: ProjectContract
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: ProjectContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ProjectContractEntity
+        - ProjectContract
+        - Worker
+        - Milestone
+        - Work
+      abis:
+        - name: ProjectContract
+          file: ./abis/ProjectContract.json
+      eventHandlers:
+        - event: MemberAdded(address)
+          handler: handleMemberAdded
+        - event: MemberRemoved(address)
+          handler: handleMemberRemoved
+        - event: ProjectUpdated(string,string,uint256,string)
+          handler: handleProjectUpdated
+        - event: MilestoneAdded(string,uint256,uint256)
+          handler: handleMilestoneAdded
+        - event: MilestoneCompleted(uint256)
+          handler: handleMilestoneCompleted
+        - event: WorkAdded(uint256,string)
+          handler: handleWorkAdded
+      file: ./src/project-contract.ts

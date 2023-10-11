@@ -8,13 +8,54 @@ type OwnershipTransferred @entity(immutable: true) {
 }
 
 type ProjectCreated @entity(immutable: true) {
-  id: Bytes!
+  id: String!
   name: String! # string
   image: String! # string
   details: String! # string
   creator: Bytes! # address
   projectAddress: Bytes! # address
+  milestones: [Milestone!]! @derivedFrom(field: "project")
+  works: [Work!]! @derivedFrom(field: "project")
+  workers: [Worker!]! @derivedFrom(field: "project")
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type ProjectContract @entity {
+  id: ID! #will be projectId for easier querying. 
+  name: String
+  description: String
+  deadline: BigInt
+  url: String
+
+}
+
+type Worker @entity {
+  id: ID!  
+  address: Bytes!
+  project: ProjectCreated!
+}
+
+type Work @entity {
+  id: ID!  
+  description: String
+  status: WorkStatus
+  project: ProjectCreated!
+}
+
+type Milestone @entity {
+  id: ID!  
+  description: String
+  deadline: BigInt
+  completed: Boolean
+  project: ProjectCreated!
+}
+
+
+
+enum WorkStatus {
+  PENDING,
+  IN_PROGRESS,
+  COMPLETED
 }
