@@ -10,6 +10,58 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class Approval extends ethereum.Event {
+  get params(): Approval__Params {
+    return new Approval__Params(this);
+  }
+}
+
+export class Approval__Params {
+  _event: Approval;
+
+  constructor(event: Approval) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get approved(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class ApprovalForAll extends ethereum.Event {
+  get params(): ApprovalForAll__Params {
+    return new ApprovalForAll__Params(this);
+  }
+}
+
+export class ApprovalForAll__Params {
+  _event: ApprovalForAll;
+
+  constructor(event: ApprovalForAll) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get operator(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get approved(): boolean {
+    return this._event.parameters[2].value.toBoolean();
+  }
+}
+
 export class MemberAdded extends ethereum.Event {
   get params(): MemberAdded__Params {
     return new MemberAdded__Params(this);
@@ -25,6 +77,10 @@ export class MemberAdded__Params {
 
   get member(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -46,47 +102,29 @@ export class MemberRemoved__Params {
   }
 }
 
-export class MilestoneAdded extends ethereum.Event {
-  get params(): MilestoneAdded__Params {
-    return new MilestoneAdded__Params(this);
+export class NotificationUpdate extends ethereum.Event {
+  get params(): NotificationUpdate__Params {
+    return new NotificationUpdate__Params(this);
   }
 }
 
-export class MilestoneAdded__Params {
-  _event: MilestoneAdded;
+export class NotificationUpdate__Params {
+  _event: NotificationUpdate;
 
-  constructor(event: MilestoneAdded) {
+  constructor(event: NotificationUpdate) {
     this._event = event;
   }
 
-  get description(): string {
-    return this._event.parameters[0].value.toString();
+  get onWorks(): boolean {
+    return this._event.parameters[0].value.toBoolean();
   }
 
-  get deadline(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get onRewards(): boolean {
+    return this._event.parameters[1].value.toBoolean();
   }
 
-  get paymentAmount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class MilestoneCompleted extends ethereum.Event {
-  get params(): MilestoneCompleted__Params {
-    return new MilestoneCompleted__Params(this);
-  }
-}
-
-export class MilestoneCompleted__Params {
-  _event: MilestoneCompleted;
-
-  constructor(event: MilestoneCompleted) {
-    this._event = event;
-  }
-
-  get milestoneIndex(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
+  get onMember(): boolean {
+    return this._event.parameters[2].value.toBoolean();
   }
 }
 
@@ -198,6 +236,32 @@ export class RoleRevoked__Params {
   }
 }
 
+export class Transfer extends ethereum.Event {
+  get params(): Transfer__Params {
+    return new Transfer__Params(this);
+  }
+}
+
+export class Transfer__Params {
+  _event: Transfer;
+
+  constructor(event: Transfer) {
+    this._event = event;
+  }
+
+  get from(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get to(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class WorkAdded extends ethereum.Event {
   get params(): WorkAdded__Params {
     return new WorkAdded__Params(this);
@@ -211,28 +275,82 @@ export class WorkAdded__Params {
     this._event = event;
   }
 
-  get milestoneIndex(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
+  get name(): string {
+    return this._event.parameters[0].value.toString();
   }
 
-  get description(): string {
+  get url(): string {
     return this._event.parameters[1].value.toString();
   }
 }
 
-export class ProjectContract__milestonesResult {
-  value0: string;
-  value1: BigInt;
+export class WorkRemoved extends ethereum.Event {
+  get params(): WorkRemoved__Params {
+    return new WorkRemoved__Params(this);
+  }
+}
+
+export class WorkRemoved__Params {
+  _event: WorkRemoved;
+
+  constructor(event: WorkRemoved) {
+    this._event = event;
+  }
+
+  get name(): string {
+    return this._event.parameters[0].value.toString();
+  }
+
+  get url(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
+export class ProjectContract__notificationSettingsResult {
+  value0: boolean;
+  value1: boolean;
   value2: boolean;
-  value3: Address;
-  value4: BigInt;
+
+  constructor(value0: boolean, value1: boolean, value2: boolean) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromBoolean(this.value0));
+    map.set("value1", ethereum.Value.fromBoolean(this.value1));
+    map.set("value2", ethereum.Value.fromBoolean(this.value2));
+    return map;
+  }
+
+  getOnWorks(): boolean {
+    return this.value0;
+  }
+
+  getOnRewards(): boolean {
+    return this.value1;
+  }
+
+  getOnMember(): boolean {
+    return this.value2;
+  }
+}
+
+export class ProjectContract__projectResult {
+  value0: string;
+  value1: string;
+  value2: BigInt;
+  value3: string;
+  value4: Address;
 
   constructor(
     value0: string,
-    value1: BigInt,
-    value2: boolean,
-    value3: Address,
-    value4: BigInt
+    value1: string,
+    value2: BigInt,
+    value3: string,
+    value4: Address
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -244,53 +362,10 @@ export class ProjectContract__milestonesResult {
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromString(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    map.set("value2", ethereum.Value.fromBoolean(this.value2));
-    map.set("value3", ethereum.Value.fromAddress(this.value3));
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
-    return map;
-  }
-
-  getDescription(): string {
-    return this.value0;
-  }
-
-  getDeadline(): BigInt {
-    return this.value1;
-  }
-
-  getCompleted(): boolean {
-    return this.value2;
-  }
-
-  getSubmitter(): Address {
-    return this.value3;
-  }
-
-  getApprovalVotes(): BigInt {
-    return this.value4;
-  }
-}
-
-export class ProjectContract__projectResult {
-  value0: string;
-  value1: string;
-  value2: BigInt;
-  value3: string;
-
-  constructor(value0: string, value1: string, value2: BigInt, value3: string) {
-    this.value0 = value0;
-    this.value1 = value1;
-    this.value2 = value2;
-    this.value3 = value3;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromString(this.value0));
     map.set("value1", ethereum.Value.fromString(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromString(this.value3));
+    map.set("value4", ethereum.Value.fromAddress(this.value4));
     return map;
   }
 
@@ -309,47 +384,41 @@ export class ProjectContract__projectResult {
   getUrl(): string {
     return this.value3;
   }
+
+  getPushChannel(): Address {
+    return this.value4;
+  }
 }
 
 export class ProjectContract__worksResult {
-  value0: BigInt;
+  value0: string;
   value1: string;
-  value2: Address;
-  value3: i32;
+  value2: boolean;
 
-  constructor(value0: BigInt, value1: string, value2: Address, value3: i32) {
+  constructor(value0: string, value1: string, value2: boolean) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
-    this.value3 = value3;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value0", ethereum.Value.fromString(this.value0));
     map.set("value1", ethereum.Value.fromString(this.value1));
-    map.set("value2", ethereum.Value.fromAddress(this.value2));
-    map.set(
-      "value3",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value3))
-    );
+    map.set("value2", ethereum.Value.fromBoolean(this.value2));
     return map;
   }
 
-  getMilestoneIndex(): BigInt {
+  getName(): string {
     return this.value0;
   }
 
-  getDescription(): string {
+  getUrl(): string {
     return this.value1;
   }
 
-  getAssignee(): Address {
+  getActive(): boolean {
     return this.value2;
-  }
-
-  getStatus(): i32 {
-    return this.value3;
   }
 }
 
@@ -411,6 +480,46 @@ export class ProjectContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  balanceOf(owner: Address): BigInt {
+    let result = super.call("balanceOf", "balanceOf(address):(uint256)", [
+      ethereum.Value.fromAddress(owner)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_balanceOf(owner: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("balanceOf", "balanceOf(address):(uint256)", [
+      ethereum.Value.fromAddress(owner)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getApproved(tokenId: BigInt): Address {
+    let result = super.call("getApproved", "getApproved(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_getApproved(tokenId: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "getApproved",
+      "getApproved(uint256):(address)",
+      [ethereum.Value.fromUnsignedBigInt(tokenId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   getRoleAdmin(role: Bytes): Bytes {
     let result = super.call("getRoleAdmin", "getRoleAdmin(bytes32):(bytes32)", [
       ethereum.Value.fromFixedBytes(role)
@@ -453,49 +562,148 @@ export class ProjectContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  milestones(param0: BigInt): ProjectContract__milestonesResult {
+  isApprovedForAll(owner: Address, operator: Address): boolean {
     let result = super.call(
-      "milestones",
-      "milestones(uint256):(string,uint256,bool,address,uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      "isApprovedForAll",
+      "isApprovedForAll(address,address):(bool)",
+      [ethereum.Value.fromAddress(owner), ethereum.Value.fromAddress(operator)]
     );
 
-    return new ProjectContract__milestonesResult(
-      result[0].toString(),
-      result[1].toBigInt(),
-      result[2].toBoolean(),
-      result[3].toAddress(),
-      result[4].toBigInt()
+    return result[0].toBoolean();
+  }
+
+  try_isApprovedForAll(
+    owner: Address,
+    operator: Address
+  ): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isApprovedForAll",
+      "isApprovedForAll(address,address):(bool)",
+      [ethereum.Value.fromAddress(owner), ethereum.Value.fromAddress(operator)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  name(): string {
+    let result = super.call("name", "name():(string)", []);
+
+    return result[0].toString();
+  }
+
+  try_name(): ethereum.CallResult<string> {
+    let result = super.tryCall("name", "name():(string)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  notificationSettings(): ProjectContract__notificationSettingsResult {
+    let result = super.call(
+      "notificationSettings",
+      "notificationSettings():(bool,bool,bool)",
+      []
+    );
+
+    return new ProjectContract__notificationSettingsResult(
+      result[0].toBoolean(),
+      result[1].toBoolean(),
+      result[2].toBoolean()
     );
   }
 
-  try_milestones(
-    param0: BigInt
-  ): ethereum.CallResult<ProjectContract__milestonesResult> {
+  try_notificationSettings(): ethereum.CallResult<
+    ProjectContract__notificationSettingsResult
+  > {
     let result = super.tryCall(
-      "milestones",
-      "milestones(uint256):(string,uint256,bool,address,uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      "notificationSettings",
+      "notificationSettings():(bool,bool,bool)",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new ProjectContract__milestonesResult(
-        value[0].toString(),
-        value[1].toBigInt(),
-        value[2].toBoolean(),
-        value[3].toAddress(),
-        value[4].toBigInt()
+      new ProjectContract__notificationSettingsResult(
+        value[0].toBoolean(),
+        value[1].toBoolean(),
+        value[2].toBoolean()
       )
     );
+  }
+
+  onERC721Received(
+    operator: Address,
+    from: Address,
+    tokenId: BigInt,
+    data: Bytes
+  ): Bytes {
+    let result = super.call(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(operator),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
+
+    return result[0].toBytes();
+  }
+
+  try_onERC721Received(
+    operator: Address,
+    from: Address,
+    tokenId: BigInt,
+    data: Bytes
+  ): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "onERC721Received",
+      "onERC721Received(address,address,uint256,bytes):(bytes4)",
+      [
+        ethereum.Value.fromAddress(operator),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBytes(data)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  ownerOf(tokenId: BigInt): Address {
+    let result = super.call("ownerOf", "ownerOf(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_ownerOf(tokenId: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   project(): ProjectContract__projectResult {
     let result = super.call(
       "project",
-      "project():(string,string,uint256,string)",
+      "project():(string,string,uint256,string,address)",
       []
     );
 
@@ -503,14 +711,15 @@ export class ProjectContract extends ethereum.SmartContract {
       result[0].toString(),
       result[1].toString(),
       result[2].toBigInt(),
-      result[3].toString()
+      result[3].toString(),
+      result[4].toAddress()
     );
   }
 
   try_project(): ethereum.CallResult<ProjectContract__projectResult> {
     let result = super.tryCall(
       "project",
-      "project():(string,string,uint256,string)",
+      "project():(string,string,uint256,string,address)",
       []
     );
     if (result.reverted) {
@@ -522,7 +731,8 @@ export class ProjectContract extends ethereum.SmartContract {
         value[0].toString(),
         value[1].toString(),
         value[2].toBigInt(),
-        value[3].toString()
+        value[3].toString(),
+        value[4].toAddress()
       )
     );
   }
@@ -550,37 +760,84 @@ export class ProjectContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  symbol(): string {
+    let result = super.call("symbol", "symbol():(string)", []);
+
+    return result[0].toString();
+  }
+
+  try_symbol(): ethereum.CallResult<string> {
+    let result = super.tryCall("symbol", "symbol():(string)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  tokenURI(tokenId: BigInt): string {
+    let result = super.call("tokenURI", "tokenURI(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+
+    return result[0].toString();
+  }
+
+  try_tokenURI(tokenId: BigInt): ethereum.CallResult<string> {
+    let result = super.tryCall("tokenURI", "tokenURI(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  uri(tokenId: BigInt): string {
+    let result = super.call("uri", "uri(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+
+    return result[0].toString();
+  }
+
+  try_uri(tokenId: BigInt): ethereum.CallResult<string> {
+    let result = super.tryCall("uri", "uri(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
   works(param0: BigInt): ProjectContract__worksResult {
-    let result = super.call(
-      "works",
-      "works(uint256):(uint256,string,address,uint8)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
+    let result = super.call("works", "works(uint256):(string,string,bool)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
 
     return new ProjectContract__worksResult(
-      result[0].toBigInt(),
+      result[0].toString(),
       result[1].toString(),
-      result[2].toAddress(),
-      result[3].toI32()
+      result[2].toBoolean()
     );
   }
 
   try_works(param0: BigInt): ethereum.CallResult<ProjectContract__worksResult> {
-    let result = super.tryCall(
-      "works",
-      "works(uint256):(uint256,string,address,uint8)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
+    let result = super.tryCall("works", "works(uint256):(string,string,bool)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
       new ProjectContract__worksResult(
-        value[0].toBigInt(),
+        value[0].toString(),
         value[1].toString(),
-        value[2].toAddress(),
-        value[3].toI32()
+        value[2].toBoolean()
       )
     );
   }
@@ -601,6 +858,14 @@ export class ConstructorCall__Inputs {
 
   constructor(call: ConstructorCall) {
     this._call = call;
+  }
+
+  get _name(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get _details(): string {
+    return this._call.inputValues[1].value.toString();
   }
 }
 
@@ -642,40 +907,6 @@ export class AddMemberCall__Outputs {
   }
 }
 
-export class AddMilestoneCall extends ethereum.Call {
-  get inputs(): AddMilestoneCall__Inputs {
-    return new AddMilestoneCall__Inputs(this);
-  }
-
-  get outputs(): AddMilestoneCall__Outputs {
-    return new AddMilestoneCall__Outputs(this);
-  }
-}
-
-export class AddMilestoneCall__Inputs {
-  _call: AddMilestoneCall;
-
-  constructor(call: AddMilestoneCall) {
-    this._call = call;
-  }
-
-  get _description(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get _deadline(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class AddMilestoneCall__Outputs {
-  _call: AddMilestoneCall;
-
-  constructor(call: AddMilestoneCall) {
-    this._call = call;
-  }
-}
-
 export class AddWorkCall extends ethereum.Call {
   get inputs(): AddWorkCall__Inputs {
     return new AddWorkCall__Inputs(this);
@@ -693,11 +924,11 @@ export class AddWorkCall__Inputs {
     this._call = call;
   }
 
-  get _milestoneIndex(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
+  get _name(): string {
+    return this._call.inputValues[0].value.toString();
   }
 
-  get _description(): string {
+  get _url(): string {
     return this._call.inputValues[1].value.toString();
   }
 }
@@ -710,32 +941,36 @@ export class AddWorkCall__Outputs {
   }
 }
 
-export class CompleteMilestoneCall extends ethereum.Call {
-  get inputs(): CompleteMilestoneCall__Inputs {
-    return new CompleteMilestoneCall__Inputs(this);
+export class ApproveCall extends ethereum.Call {
+  get inputs(): ApproveCall__Inputs {
+    return new ApproveCall__Inputs(this);
   }
 
-  get outputs(): CompleteMilestoneCall__Outputs {
-    return new CompleteMilestoneCall__Outputs(this);
+  get outputs(): ApproveCall__Outputs {
+    return new ApproveCall__Outputs(this);
   }
 }
 
-export class CompleteMilestoneCall__Inputs {
-  _call: CompleteMilestoneCall;
+export class ApproveCall__Inputs {
+  _call: ApproveCall;
 
-  constructor(call: CompleteMilestoneCall) {
+  constructor(call: ApproveCall) {
     this._call = call;
   }
 
-  get _milestoneIndex(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
+  get to(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
   }
 }
 
-export class CompleteMilestoneCall__Outputs {
-  _call: CompleteMilestoneCall;
+export class ApproveCall__Outputs {
+  _call: ApproveCall;
 
-  constructor(call: CompleteMilestoneCall) {
+  constructor(call: ApproveCall) {
     this._call = call;
   }
 }
@@ -774,6 +1009,82 @@ export class GrantRoleCall__Outputs {
   }
 }
 
+export class MakeAdminCall extends ethereum.Call {
+  get inputs(): MakeAdminCall__Inputs {
+    return new MakeAdminCall__Inputs(this);
+  }
+
+  get outputs(): MakeAdminCall__Outputs {
+    return new MakeAdminCall__Outputs(this);
+  }
+}
+
+export class MakeAdminCall__Inputs {
+  _call: MakeAdminCall;
+
+  constructor(call: MakeAdminCall) {
+    this._call = call;
+  }
+
+  get _member(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class MakeAdminCall__Outputs {
+  _call: MakeAdminCall;
+
+  constructor(call: MakeAdminCall) {
+    this._call = call;
+  }
+}
+
+export class OnERC721ReceivedCall extends ethereum.Call {
+  get inputs(): OnERC721ReceivedCall__Inputs {
+    return new OnERC721ReceivedCall__Inputs(this);
+  }
+
+  get outputs(): OnERC721ReceivedCall__Outputs {
+    return new OnERC721ReceivedCall__Outputs(this);
+  }
+}
+
+export class OnERC721ReceivedCall__Inputs {
+  _call: OnERC721ReceivedCall;
+
+  constructor(call: OnERC721ReceivedCall) {
+    this._call = call;
+  }
+
+  get operator(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get from(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get data(): Bytes {
+    return this._call.inputValues[3].value.toBytes();
+  }
+}
+
+export class OnERC721ReceivedCall__Outputs {
+  _call: OnERC721ReceivedCall;
+
+  constructor(call: OnERC721ReceivedCall) {
+    this._call = call;
+  }
+
+  get value0(): Bytes {
+    return this._call.outputValues[0].value.toBytes();
+  }
+}
+
 export class RemoveMemberCall extends ethereum.Call {
   get inputs(): RemoveMemberCall__Inputs {
     return new RemoveMemberCall__Inputs(this);
@@ -794,12 +1105,46 @@ export class RemoveMemberCall__Inputs {
   get _member(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
 }
 
 export class RemoveMemberCall__Outputs {
   _call: RemoveMemberCall;
 
   constructor(call: RemoveMemberCall) {
+    this._call = call;
+  }
+}
+
+export class RemoveWorkCall extends ethereum.Call {
+  get inputs(): RemoveWorkCall__Inputs {
+    return new RemoveWorkCall__Inputs(this);
+  }
+
+  get outputs(): RemoveWorkCall__Outputs {
+    return new RemoveWorkCall__Outputs(this);
+  }
+}
+
+export class RemoveWorkCall__Inputs {
+  _call: RemoveWorkCall;
+
+  constructor(call: RemoveWorkCall) {
+    this._call = call;
+  }
+
+  get _index(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class RemoveWorkCall__Outputs {
+  _call: RemoveWorkCall;
+
+  constructor(call: RemoveWorkCall) {
     this._call = call;
   }
 }
@@ -872,6 +1217,158 @@ export class RevokeRoleCall__Outputs {
   }
 }
 
+export class SafeTransferFromCall extends ethereum.Call {
+  get inputs(): SafeTransferFromCall__Inputs {
+    return new SafeTransferFromCall__Inputs(this);
+  }
+
+  get outputs(): SafeTransferFromCall__Outputs {
+    return new SafeTransferFromCall__Outputs(this);
+  }
+}
+
+export class SafeTransferFromCall__Inputs {
+  _call: SafeTransferFromCall;
+
+  constructor(call: SafeTransferFromCall) {
+    this._call = call;
+  }
+
+  get from(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class SafeTransferFromCall__Outputs {
+  _call: SafeTransferFromCall;
+
+  constructor(call: SafeTransferFromCall) {
+    this._call = call;
+  }
+}
+
+export class SafeTransferFrom1Call extends ethereum.Call {
+  get inputs(): SafeTransferFrom1Call__Inputs {
+    return new SafeTransferFrom1Call__Inputs(this);
+  }
+
+  get outputs(): SafeTransferFrom1Call__Outputs {
+    return new SafeTransferFrom1Call__Outputs(this);
+  }
+}
+
+export class SafeTransferFrom1Call__Inputs {
+  _call: SafeTransferFrom1Call;
+
+  constructor(call: SafeTransferFrom1Call) {
+    this._call = call;
+  }
+
+  get from(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get data(): Bytes {
+    return this._call.inputValues[3].value.toBytes();
+  }
+}
+
+export class SafeTransferFrom1Call__Outputs {
+  _call: SafeTransferFrom1Call;
+
+  constructor(call: SafeTransferFrom1Call) {
+    this._call = call;
+  }
+}
+
+export class SetApprovalForAllCall extends ethereum.Call {
+  get inputs(): SetApprovalForAllCall__Inputs {
+    return new SetApprovalForAllCall__Inputs(this);
+  }
+
+  get outputs(): SetApprovalForAllCall__Outputs {
+    return new SetApprovalForAllCall__Outputs(this);
+  }
+}
+
+export class SetApprovalForAllCall__Inputs {
+  _call: SetApprovalForAllCall;
+
+  constructor(call: SetApprovalForAllCall) {
+    this._call = call;
+  }
+
+  get operator(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get approved(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class SetApprovalForAllCall__Outputs {
+  _call: SetApprovalForAllCall;
+
+  constructor(call: SetApprovalForAllCall) {
+    this._call = call;
+  }
+}
+
+export class TransferFromCall extends ethereum.Call {
+  get inputs(): TransferFromCall__Inputs {
+    return new TransferFromCall__Inputs(this);
+  }
+
+  get outputs(): TransferFromCall__Outputs {
+    return new TransferFromCall__Outputs(this);
+  }
+}
+
+export class TransferFromCall__Inputs {
+  _call: TransferFromCall;
+
+  constructor(call: TransferFromCall) {
+    this._call = call;
+  }
+
+  get from(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class TransferFromCall__Outputs {
+  _call: TransferFromCall;
+
+  constructor(call: TransferFromCall) {
+    this._call = call;
+  }
+}
+
 export class UpdateProjectCall extends ethereum.Call {
   get inputs(): UpdateProjectCall__Inputs {
     return new UpdateProjectCall__Inputs(this);
@@ -910,6 +1407,86 @@ export class UpdateProjectCall__Outputs {
   _call: UpdateProjectCall;
 
   constructor(call: UpdateProjectCall) {
+    this._call = call;
+  }
+}
+
+export class UpdatePushChannelCall extends ethereum.Call {
+  get inputs(): UpdatePushChannelCall__Inputs {
+    return new UpdatePushChannelCall__Inputs(this);
+  }
+
+  get outputs(): UpdatePushChannelCall__Outputs {
+    return new UpdatePushChannelCall__Outputs(this);
+  }
+}
+
+export class UpdatePushChannelCall__Inputs {
+  _call: UpdatePushChannelCall;
+
+  constructor(call: UpdatePushChannelCall) {
+    this._call = call;
+  }
+
+  get _pushChannel(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _onWorks(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+
+  get _onRewards(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+
+  get _onMember(): boolean {
+    return this._call.inputValues[3].value.toBoolean();
+  }
+}
+
+export class UpdatePushChannelCall__Outputs {
+  _call: UpdatePushChannelCall;
+
+  constructor(call: UpdatePushChannelCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateSettingCall extends ethereum.Call {
+  get inputs(): UpdateSettingCall__Inputs {
+    return new UpdateSettingCall__Inputs(this);
+  }
+
+  get outputs(): UpdateSettingCall__Outputs {
+    return new UpdateSettingCall__Outputs(this);
+  }
+}
+
+export class UpdateSettingCall__Inputs {
+  _call: UpdateSettingCall;
+
+  constructor(call: UpdateSettingCall) {
+    this._call = call;
+  }
+
+  get _onWorks(): boolean {
+    return this._call.inputValues[0].value.toBoolean();
+  }
+
+  get _onRewards(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+
+  get _onMember(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+}
+
+export class UpdateSettingCall__Outputs {
+  _call: UpdateSettingCall;
+
+  constructor(call: UpdateSettingCall) {
     this._call = call;
   }
 }

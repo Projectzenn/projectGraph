@@ -2,9 +2,9 @@ import {
   OwnershipTransferred as OwnershipTransferredEvent,
   ProjectCreated as ProjectCreatedEvent
 } from "../generated/ProjectRegistry/ProjectRegistry"
-import { OwnershipTransferred, ProjectCreated, Work } from "../generated/schema"
-import { ProjectContract } from '../generated/templates'
-import { WorkAdded } from "../generated/templates/ProjectContractTemplate/ProjectContract"
+import { OwnershipTransferred, ProjectCreated } from "../generated/schema"
+import { ProjectContract } from "../generated/templates"
+
 export function handleOwnershipTransferred(
   event: OwnershipTransferredEvent
 ): void {
@@ -14,7 +14,6 @@ export function handleOwnershipTransferred(
   entity.previousOwner = event.params.previousOwner
   entity.newOwner = event.params.newOwner
 
-  entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 
@@ -32,24 +31,12 @@ export function handleProjectCreated(event: ProjectCreatedEvent): void {
   entity.creator = event.params.creator
   entity.projectAddress = event.params.projectAddress
 
-  entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 
   entity.save()
   
   ProjectContract.create(event.params.projectAddress)
+
 }
 
-
-const PENDING: string = "PENDING";
-
-
-export function handleWorkAdded(event: WorkAdded): void {
-  let workID = event.address.toHexString() + "-" + event.params.description
-  let work = new Work(workID)
-  work.description = event.params.description
-  work.status = PENDING
-  work.project = event.address.toHexString()  // Linking the work to its project
-  work.save()
-}

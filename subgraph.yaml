@@ -6,9 +6,9 @@ dataSources:
     name: ProjectRegistry
     network: mumbai
     source:
-      address: "0xd2925f94bA3AB298b9AdF0110c4Ed23B466f3cBe"
+      address: "0x1Cf9a47f91DccA1D18184203C73B0f3988b38e3c"
       abi: ProjectRegistry
-      startBlock: 41088621
+      startBlock: 41433232
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -18,8 +18,8 @@ dataSources:
         - ProjectCreated
         - ProjectContract
         - Worker
-        - Milestone
         - Work
+        - NotificationSettings
       abis:
         - name: ProjectRegistry
           file: ./abis/ProjectRegistry.json
@@ -40,25 +40,25 @@ templates:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - ProjectContractEntity
         - ProjectContract
         - Worker
-        - Milestone
+        - ProjectCreated
         - Work
+        - NotificationSettings
       abis:
         - name: ProjectContract
           file: ./abis/ProjectContract.json
       eventHandlers:
-        - event: MemberAdded(address)
+        - event: MemberAdded(address,uint256)
           handler: handleMemberAdded
         - event: MemberRemoved(address)
           handler: handleMemberRemoved
         - event: ProjectUpdated(string,string,uint256,string)
           handler: handleProjectUpdated
-        - event: MilestoneAdded(string,uint256,uint256)
-          handler: handleMilestoneAdded
-        - event: MilestoneCompleted(uint256)
-          handler: handleMilestoneCompleted
-        - event: WorkAdded(uint256,string)
+        - event: WorkAdded(string,string)
           handler: handleWorkAdded
+        - event: WorkRemoved(string,string)
+          handler: handleWorkRemoved
+        - event: NotificationUpdate(bool,bool,bool)
+          handler: handleNotificationUpdate
       file: ./src/project-contract.ts

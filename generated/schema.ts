@@ -161,76 +161,147 @@ export class ProjectCreated extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get name(): string {
+  get name(): string | null {
     let value = this.get("name");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toString();
     }
   }
 
-  set name(value: string) {
-    this.set("name", Value.fromString(value));
+  set name(value: string | null) {
+    if (!value) {
+      this.unset("name");
+    } else {
+      this.set("name", Value.fromString(<string>value));
+    }
   }
 
-  get image(): string {
+  get image(): string | null {
     let value = this.get("image");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toString();
     }
   }
 
-  set image(value: string) {
-    this.set("image", Value.fromString(value));
+  set image(value: string | null) {
+    if (!value) {
+      this.unset("image");
+    } else {
+      this.set("image", Value.fromString(<string>value));
+    }
   }
 
-  get details(): string {
+  get details(): string | null {
     let value = this.get("details");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toString();
     }
   }
 
-  set details(value: string) {
-    this.set("details", Value.fromString(value));
+  set details(value: string | null) {
+    if (!value) {
+      this.unset("details");
+    } else {
+      this.set("details", Value.fromString(<string>value));
+    }
   }
 
-  get creator(): Bytes {
-    let value = this.get("creator");
+  get deadline(): BigInt | null {
+    let value = this.get("deadline");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set deadline(value: BigInt | null) {
+    if (!value) {
+      this.unset("deadline");
+    } else {
+      this.set("deadline", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get pushChannel(): Bytes | null {
+    let value = this.get("pushChannel");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
     } else {
       return value.toBytes();
     }
   }
 
-  set creator(value: Bytes) {
-    this.set("creator", Value.fromBytes(value));
+  set pushChannel(value: Bytes | null) {
+    if (!value) {
+      this.unset("pushChannel");
+    } else {
+      this.set("pushChannel", Value.fromBytes(<Bytes>value));
+    }
   }
 
-  get projectAddress(): Bytes {
+  get projectAddress(): Bytes | null {
     let value = this.get("projectAddress");
     if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
+      return null;
     } else {
       return value.toBytes();
     }
   }
 
-  set projectAddress(value: Bytes) {
-    this.set("projectAddress", Value.fromBytes(value));
+  set projectAddress(value: Bytes | null) {
+    if (!value) {
+      this.unset("projectAddress");
+    } else {
+      this.set("projectAddress", Value.fromBytes(<Bytes>value));
+    }
   }
 
-  get milestones(): MilestoneLoader {
-    return new MilestoneLoader(
+  get creator(): Bytes | null {
+    let value = this.get("creator");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set creator(value: Bytes | null) {
+    if (!value) {
+      this.unset("creator");
+    } else {
+      this.set("creator", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get url(): string | null {
+    let value = this.get("url");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set url(value: string | null) {
+    if (!value) {
+      this.unset("url");
+    } else {
+      this.set("url", Value.fromString(<string>value));
+    }
+  }
+
+  get members(): MemberLoader {
+    return new MemberLoader(
       "ProjectCreated",
       this.get("id")!.toString(),
-      "milestones"
+      "members"
     );
   }
 
@@ -242,25 +313,12 @@ export class ProjectCreated extends Entity {
     );
   }
 
-  get workers(): WorkerLoader {
-    return new WorkerLoader(
+  get notificationSettings(): NotificationSettingsLoader {
+    return new NotificationSettingsLoader(
       "ProjectCreated",
       this.get("id")!.toString(),
-      "workers"
+      "notificationSettings"
     );
-  }
-
-  get blockNumber(): BigInt {
-    let value = this.get("blockNumber");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set blockNumber(value: BigInt) {
-    this.set("blockNumber", Value.fromBigInt(value));
   }
 
   get blockTimestamp(): BigInt {
@@ -290,7 +348,7 @@ export class ProjectCreated extends Entity {
   }
 }
 
-export class ProjectContract extends Entity {
+export class Member extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -298,132 +356,22 @@ export class ProjectContract extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ProjectContract entity without an ID");
+    assert(id != null, "Cannot save Member entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type ProjectContract must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Member must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("ProjectContract", id.toString(), this);
+      store.set("Member", id.toString(), this);
     }
   }
 
-  static loadInBlock(id: string): ProjectContract | null {
-    return changetype<ProjectContract | null>(
-      store.get_in_block("ProjectContract", id)
-    );
+  static loadInBlock(id: string): Member | null {
+    return changetype<Member | null>(store.get_in_block("Member", id));
   }
 
-  static load(id: string): ProjectContract | null {
-    return changetype<ProjectContract | null>(store.get("ProjectContract", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get name(): string | null {
-    let value = this.get("name");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set name(value: string | null) {
-    if (!value) {
-      this.unset("name");
-    } else {
-      this.set("name", Value.fromString(<string>value));
-    }
-  }
-
-  get description(): string | null {
-    let value = this.get("description");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set description(value: string | null) {
-    if (!value) {
-      this.unset("description");
-    } else {
-      this.set("description", Value.fromString(<string>value));
-    }
-  }
-
-  get deadline(): BigInt | null {
-    let value = this.get("deadline");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set deadline(value: BigInt | null) {
-    if (!value) {
-      this.unset("deadline");
-    } else {
-      this.set("deadline", Value.fromBigInt(<BigInt>value));
-    }
-  }
-
-  get url(): string | null {
-    let value = this.get("url");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set url(value: string | null) {
-    if (!value) {
-      this.unset("url");
-    } else {
-      this.set("url", Value.fromString(<string>value));
-    }
-  }
-}
-
-export class Worker extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Worker entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type Worker must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("Worker", id.toString(), this);
-    }
-  }
-
-  static loadInBlock(id: string): Worker | null {
-    return changetype<Worker | null>(store.get_in_block("Worker", id));
-  }
-
-  static load(id: string): Worker | null {
-    return changetype<Worker | null>(store.get("Worker", id));
+  static load(id: string): Member | null {
+    return changetype<Member | null>(store.get("Member", id));
   }
 
   get id(): string {
@@ -452,8 +400,21 @@ export class Worker extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
-  get project(): string {
-    let value = this.get("project");
+  get tokenId(): BigInt {
+    let value = this.get("tokenId");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set tokenId(value: BigInt) {
+    this.set("tokenId", Value.fromBigInt(value));
+  }
+
+  get projectCreated(): string {
+    let value = this.get("projectCreated");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
@@ -461,8 +422,8 @@ export class Worker extends Entity {
     }
   }
 
-  set project(value: string) {
-    this.set("project", Value.fromString(value));
+  set projectCreated(value: string) {
+    this.set("projectCreated", Value.fromString(value));
   }
 }
 
@@ -539,8 +500,8 @@ export class Work extends Entity {
     }
   }
 
-  get project(): string {
-    let value = this.get("project");
+  get projectCreated(): string {
+    let value = this.get("projectCreated");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
@@ -548,12 +509,12 @@ export class Work extends Entity {
     }
   }
 
-  set project(value: string) {
-    this.set("project", Value.fromString(value));
+  set projectCreated(value: string) {
+    this.set("projectCreated", Value.fromString(value));
   }
 }
 
-export class Milestone extends Entity {
+export class NotificationSettings extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -561,22 +522,26 @@ export class Milestone extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save Milestone entity without an ID");
+    assert(id != null, "Cannot save NotificationSettings entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type Milestone must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type NotificationSettings must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("Milestone", id.toString(), this);
+      store.set("NotificationSettings", id.toString(), this);
     }
   }
 
-  static loadInBlock(id: string): Milestone | null {
-    return changetype<Milestone | null>(store.get_in_block("Milestone", id));
+  static loadInBlock(id: string): NotificationSettings | null {
+    return changetype<NotificationSettings | null>(
+      store.get_in_block("NotificationSettings", id)
+    );
   }
 
-  static load(id: string): Milestone | null {
-    return changetype<Milestone | null>(store.get("Milestone", id));
+  static load(id: string): NotificationSettings | null {
+    return changetype<NotificationSettings | null>(
+      store.get("NotificationSettings", id)
+    );
   }
 
   get id(): string {
@@ -592,42 +557,8 @@ export class Milestone extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get description(): string | null {
-    let value = this.get("description");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set description(value: string | null) {
-    if (!value) {
-      this.unset("description");
-    } else {
-      this.set("description", Value.fromString(<string>value));
-    }
-  }
-
-  get deadline(): BigInt | null {
-    let value = this.get("deadline");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set deadline(value: BigInt | null) {
-    if (!value) {
-      this.unset("deadline");
-    } else {
-      this.set("deadline", Value.fromBigInt(<BigInt>value));
-    }
-  }
-
-  get completed(): boolean {
-    let value = this.get("completed");
+  get onWorks(): boolean {
+    let value = this.get("onWorks");
     if (!value || value.kind == ValueKind.NULL) {
       return false;
     } else {
@@ -635,12 +566,38 @@ export class Milestone extends Entity {
     }
   }
 
-  set completed(value: boolean) {
-    this.set("completed", Value.fromBoolean(value));
+  set onWorks(value: boolean) {
+    this.set("onWorks", Value.fromBoolean(value));
   }
 
-  get project(): string {
-    let value = this.get("project");
+  get onRewards(): boolean {
+    let value = this.get("onRewards");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set onRewards(value: boolean) {
+    this.set("onRewards", Value.fromBoolean(value));
+  }
+
+  get onMember(): boolean {
+    let value = this.get("onMember");
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
+  }
+
+  set onMember(value: boolean) {
+    this.set("onMember", Value.fromBoolean(value));
+  }
+
+  get projectCreated(): string {
+    let value = this.get("projectCreated");
     if (!value || value.kind == ValueKind.NULL) {
       throw new Error("Cannot return null for a required field.");
     } else {
@@ -648,12 +605,12 @@ export class Milestone extends Entity {
     }
   }
 
-  set project(value: string) {
-    this.set("project", Value.fromString(value));
+  set projectCreated(value: string) {
+    this.set("projectCreated", Value.fromString(value));
   }
 }
 
-export class MilestoneLoader extends Entity {
+export class MemberLoader extends Entity {
   _entity: string;
   _field: string;
   _id: string;
@@ -665,9 +622,9 @@ export class MilestoneLoader extends Entity {
     this._field = field;
   }
 
-  load(): Milestone[] {
+  load(): Member[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<Milestone[]>(value);
+    return changetype<Member[]>(value);
   }
 }
 
@@ -689,7 +646,7 @@ export class WorkLoader extends Entity {
   }
 }
 
-export class WorkerLoader extends Entity {
+export class NotificationSettingsLoader extends Entity {
   _entity: string;
   _field: string;
   _id: string;
@@ -701,8 +658,8 @@ export class WorkerLoader extends Entity {
     this._field = field;
   }
 
-  load(): Worker[] {
+  load(): NotificationSettings[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<Worker[]>(value);
+    return changetype<NotificationSettings[]>(value);
   }
 }

@@ -7,49 +7,43 @@ type OwnershipTransferred @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ProjectCreated @entity(immutable: true) {
-  id: String!
-  name: String! # string
-  image: String! # string
-  details: String! # string
-  creator: Bytes! # address
-  projectAddress: Bytes! # address
-  milestones: [Milestone!]! @derivedFrom(field: "project")
-  works: [Work!]! @derivedFrom(field: "project")
-  workers: [Worker!]! @derivedFrom(field: "project")
-  blockNumber: BigInt!
+type ProjectCreated @entity(immutable:true) {
+  id: ID!
+  name: String
+  image: String
+  details: String
+  deadline: BigInt
+  pushChannel: Bytes
+  projectAddress: Bytes
+  creator: Bytes
+  url: String
+  members: [Member!]! @derivedFrom(field: "projectCreated")
+  works: [Work!]! @derivedFrom(field: "projectCreated")
+  notificationSettings: NotificationSettings @derivedFrom(field: "projectCreated")
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type ProjectContract @entity {
-  id: ID! #will be projectId for easier querying. 
-  name: String
-  description: String
-  deadline: BigInt
-  url: String
-
-}
-
-type Worker @entity {
-  id: ID!  
+type Member @entity {
+  id: ID!
   address: Bytes!
-  project: ProjectCreated!
+  tokenId: BigInt!
+  projectCreated: ProjectCreated!
 }
 
 type Work @entity {
-  id: ID!  
+  id: ID!
   description: String
   status: WorkStatus
-  project: ProjectCreated!
+  projectCreated: ProjectCreated!
 }
 
-type Milestone @entity {
-  id: ID!  
-  description: String
-  deadline: BigInt
-  completed: Boolean
-  project: ProjectCreated!
+type NotificationSettings @entity {
+  id: ID!
+  onWorks: Boolean
+  onRewards: Boolean
+  onMember: Boolean
+  projectCreated: ProjectCreated!
 }
 
 
