@@ -28,6 +28,7 @@ type Member @entity {
   id: ID!
   address: Bytes!
   tokenId: BigInt!
+  joinedAt: BigInt!
   projectCreated: ProjectCreated!
 }
 

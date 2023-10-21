@@ -4,10 +4,14 @@ import { MemberAdded, MemberRemoved, NotificationUpdate, ProjectUpdated, WorkAdd
 
 import { Member, NotificationSettings, ProjectCreated, Work } from '../generated/schema';
 export function handleMemberAdded(event: MemberAdded): void {
+  let project = ProjectCreated.load(event.address.toHex())
+  if (!project) return;
   let memberId = event.params.member.toHex()
   let member = new Member(memberId)
   member.address = event.params.member
-  member.projectCreated = event.transaction.hash.toHex()
+  member.tokenId = event.params.tokenId
+  member.joinedAt = event.block.timestamp
+  member.projectCreated = project.id
   member.save()
 }
 
@@ -19,6 +23,7 @@ export function handleMemberRemoved(event: MemberRemoved): void {
 
 export function handleProjectUpdated(event: ProjectUpdated): void {
   let projectId = event.transaction.hash.toHex()
+  
   let project = ProjectCreated.load(projectId)
   if (project) {
     project.name = event.params.name // Replace with actual param name
@@ -30,15 +35,18 @@ export function handleProjectUpdated(event: ProjectUpdated): void {
 }
 
 export function handleWorkAdded(event: WorkAdded): void {
+  let project = ProjectCreated.load(event.address.toHex())
+  if (!project) return;
   let workId = event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   let work = new Work(workId)
   work.description = event.params.url // Replace with actual param name
   work.status = "PENDING" // Assuming a new work always starts as PENDING
-  work.projectCreated = event.transaction.hash.toHex()
+  work.projectCreated = project.id
   work.save()
 }
 
 export function handleNotificationUpdate(event: NotificationUpdate): void {
+  
   let projectId = event.transaction.hash.toHex()
   
   // Load the associated ProjectCreated entity

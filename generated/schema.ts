@@ -413,6 +413,19 @@ export class Member extends Entity {
     this.set("tokenId", Value.fromBigInt(value));
   }
 
+  get joinedAt(): BigInt {
+    let value = this.get("joinedAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set joinedAt(value: BigInt) {
+    this.set("joinedAt", Value.fromBigInt(value));
+  }
+
   get projectCreated(): string {
     let value = this.get("projectCreated");
     if (!value || value.kind == ValueKind.NULL) {
